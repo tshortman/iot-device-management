@@ -1,0 +1,19 @@
+{
+  "name": "iot-device-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "Tom Shortman",
+  "license": "ISC",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  }
+}
