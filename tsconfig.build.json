@@ -1,0 +1,11 @@
+// Build config: compiles only shipped source, so tests never reach dist/.
+// The base tsconfig.json deliberately includes test/ as well, so `npm run
+// typecheck` checks everything the editor does.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}
