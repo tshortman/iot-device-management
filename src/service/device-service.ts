@@ -46,6 +46,25 @@ export class DeviceService {
     return device;
   }
 
+  updateState(id: string, patch: unknown): Device {
+    const device = this.get(id);
+    const beforeImage = device.auditSnapshot();
+    device.applyStatePatch(patch);
+    this.repository.update(
+      device,
+      this.event(device, "state_changed", beforeImage),
+    );
+    return device;
+  }
+
+  // History is returned even if device is marked as deleted.
+  history(id: string): DeviceEvent[] {
+    if (!this.repository.findById(id)) {
+      throw new NotFoundError("Device", id);
+    }
+    return this.repository.listEvents(id);
+  }
+
   remove(id: string): void {
     const device = this.repository.findById(id);
     if (!device) {

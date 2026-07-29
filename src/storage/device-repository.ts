@@ -17,6 +17,6 @@ export interface DeviceRepository {
   /** List every device that isn't marked as deleted. */
   list(): Device[];
 
-  /** List the history of a device's events. */
+  /** List the history of a device's events, newest first. */
   listEvents(deviceId: string): DeviceEvent[];
 }

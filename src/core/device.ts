@@ -79,6 +79,9 @@ export abstract class Device {
   applyStatePatch(patch: unknown, now = new Date()): void {
     this.ensureNotDeleted();
     const validated = this.parseWith(this.stateSchema.partial(), patch);
+    if (Object.keys(validated).length === 0) {
+      throw new ValidationError("Patch must change at least one field");
+    }
     this._state = { ...this.state, ...validated };
     this.updatedAt = now;
   }

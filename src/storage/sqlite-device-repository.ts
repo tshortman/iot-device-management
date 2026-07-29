@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import type { Device, DeviceDto } from "../core/device.js";
 import type { DeviceEvent, EventType } from "../core/device-event.js";
 import { ConflictError } from "../core/errors.js";
@@ -53,7 +53,11 @@ export class SqliteDeviceRepository implements DeviceRepository {
           deletedAt: device.deletedAt,
         })
         .run();
-      this.mapperFor(device).insert(tx, device.id, device.snapshotState());
+      this.stateMapperFor(device.type as DeviceType).insert(
+        tx,
+        device.id,
+        device.snapshotState(),
+      );
       this.insertEvent(tx, event);
     });
   }
@@ -70,7 +74,11 @@ export class SqliteDeviceRepository implements DeviceRepository {
         })
         .where(eq(devices.id, device.id))
         .run();
-      this.mapperFor(device).update(tx, device.id, device.snapshotState());
+      this.stateMapperFor(device.type as DeviceType).update(
+        tx,
+        device.id,
+        device.snapshotState(),
+      );
       this.insertEvent(tx, event);
     });
   }
@@ -114,7 +122,7 @@ export class SqliteDeviceRepository implements DeviceRepository {
       .select()
       .from(deviceEvents)
       .where(eq(deviceEvents.deviceId, deviceId))
-      .orderBy(asc(deviceEvents.createdAt), asc(deviceEvents.id))
+      .orderBy(desc(deviceEvents.createdAt), desc(deviceEvents.id))
       .all();
     return rows.map((row) => ({
       id: row.id,
@@ -125,8 +133,8 @@ export class SqliteDeviceRepository implements DeviceRepository {
     }));
   }
 
-  private mapperFor(device: Device) {
-    return stateMapper[device.type as DeviceType];
+  private stateMapperFor(type: DeviceType) {
+    return stateMapper[type];
   }
 
   private insertEvent(tx: Tx, event: DeviceEvent): void {

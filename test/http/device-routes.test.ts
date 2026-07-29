@@ -130,9 +130,7 @@ describe("device routes", () => {
     const created = await register();
     const id = idOf(created);
 
-    const response = await request(app)
-      .patch(`/api/v1/devices/${id}`)
-      .send({});
+    const response = await request(app).patch(`/api/v1/devices/${id}`).send({});
 
     expect(response.status).toBe(422);
   });
@@ -142,5 +140,36 @@ describe("device routes", () => {
       .patch("/api/v1/devices/nope")
       .send({ name: "Landing light" });
     expect(response.status).toBe(404);
+  });
+
+  it("applies a state patch and returns the updated device", async () => {
+    const created = await register();
+    const response = await request(app)
+      .patch(`/api/v1/devices/${idOf(created)}/state`)
+      .send({ on: true });
+    expect(response.status).toBe(200);
+    expect(asObject(response).state).toEqual({ on: true, brightness: 100 });
+  });
+
+  it("rejects a state field belonging to another type", async () => {
+    const created = await register({
+      ...light,
+      type: "thermostat",
+      serialNumber: "SN-0003",
+    });
+    const response = await request(app)
+      .patch(`/api/v1/devices/${idOf(created)}/state`)
+      .send({ brightness: 80 });
+    expect(response.status).toBe(422);
+  });
+
+  it("keeps history readable after the device is deleted", async () => {
+    const created = await register();
+    const id = idOf(created);
+    await request(app).delete(`/api/v1/devices/${id}`);
+
+    const response = await request(app).get(`/api/v1/devices/${id}/history`);
+    expect(response.status).toBe(200);
+    expect(asArray(response)[0]).toMatchObject({ type: "deleted" });
   });
 });

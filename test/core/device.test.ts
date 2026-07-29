@@ -16,6 +16,11 @@ describe("device state mutation", () => {
       ValidationError,
     );
   });
+
+  it("rejects an empty patch", () => {
+    const device = makeDevice({ type: "light" });
+    expect(() => device.applyStatePatch({})).toThrow(ValidationError);
+  });
 });
 
 describe("device lifecycle", () => {

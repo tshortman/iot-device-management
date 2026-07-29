@@ -48,6 +48,16 @@ export function deviceRoutes(service: DeviceService): Router {
     res.json(service.updateConfiguration(req.params.id, patch).toJSON());
   });
 
+  // Body validated by the device's own type schema instead of parseBody
+  // because state schema isn't known at http layer.
+  router.patch<{ id: string }>("/:id/state", (req, res) => {
+    res.json(service.updateState(req.params.id, req.body).toJSON());
+  });
+
+  router.get<{ id: string }>("/:id/history", (req, res) => {
+    res.json(service.history(req.params.id));
+  });
+
   router.delete<{ id: string }>("/:id", (req, res) => {
     service.remove(req.params.id);
     res.status(204).end();
