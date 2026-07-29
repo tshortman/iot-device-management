@@ -75,7 +75,7 @@ export abstract class Device {
     };
   }
 
-  /** Apply a partial patch against this type's schema. */
+  /** Apply a partial patch against this type's state schema. */
   applyStatePatch(patch: unknown, now = new Date()): void {
     this.ensureNotDeleted();
     const validated = this.parseWith(this.stateSchema.partial(), patch);
@@ -83,7 +83,32 @@ export abstract class Device {
     this.updatedAt = now;
   }
 
-  /** Soft delete to maintain audit history */
+  /** Apply a configuration patch against a device. */
+  applyConfigPatch(
+    patch: {
+      name?: string;
+      firmwareVersion?: string | null;
+      room?: string | null;
+    },
+    now = new Date(),
+  ): void {
+    this.ensureNotDeleted();
+    if (patch.name !== undefined) {
+      this.name = patch.name;
+    }
+    if (patch.firmwareVersion !== undefined) {
+      this.firmwareVersion = patch.firmwareVersion;
+    }
+    if (patch.room !== undefined) {
+      this.room = patch.room;
+    }
+    this.updatedAt = now;
+  }
+
+  /**
+   * Soft delete to maintain audit history.
+   * Returns false if already deleted
+   */
   softDelete(now = new Date()): boolean {
     if (this.deletedAt !== null) return false;
     this.deletedAt = now;
