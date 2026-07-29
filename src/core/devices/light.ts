@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Device } from "../device.js";
 
-const stateSchema = z.strictObject({
+export const LightStateSchema = z.strictObject({
   on: z.boolean(),
   brightness: z.number().int().min(0).max(100),
 });
@@ -12,7 +12,7 @@ export class LightDevice extends Device {
     return "light" as const;
   }
   get stateSchema() {
-    return stateSchema;
+    return LightStateSchema;
   }
   get defaultState() {
     return defaultState;

@@ -4,7 +4,7 @@ import { Device } from "../device.js";
 /** Exported so the DB's mode CHECK can be generated from this, not retyped. */
 export const ThermostatModeSchema = z.enum(["heat", "cool", "off"]);
 
-const stateSchema = z.strictObject({
+export const ThermostatStateSchema = z.strictObject({
   targetTemp: z.number().min(5).max(30),
   currentTemp: z.number(),
   mode: ThermostatModeSchema,
@@ -16,7 +16,7 @@ export class ThermostatDevice extends Device {
     return "thermostat" as const;
   }
   get stateSchema() {
-    return stateSchema;
+    return ThermostatStateSchema;
   }
   get defaultState() {
     return defaultState;

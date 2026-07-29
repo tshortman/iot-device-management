@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Device } from "../device.js";
 
-const stateSchema = z.strictObject({
+export const CameraStateSchema = z.strictObject({
   recording: z.boolean(),
   motionDetected: z.boolean(),
 });
@@ -12,7 +12,7 @@ export class CameraDevice extends Device {
     return "camera" as const;
   }
   get stateSchema() {
-    return stateSchema;
+    return CameraStateSchema;
   }
   get defaultState() {
     return defaultState;
