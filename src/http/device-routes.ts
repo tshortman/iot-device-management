@@ -1,5 +1,6 @@
 import { Router } from "express";
 import type { z } from "zod";
+import { DEVICES_PATH } from "../config.js";
 import {
   RegisterDeviceInputSchema,
   UpdateDeviceMetadataSchema,
@@ -31,7 +32,7 @@ export function deviceRoutes(service: DeviceService): Router {
     );
     res
       .status(201)
-      .location(`/api/v1/devices/${device.id}`)
+      .location(`${DEVICES_PATH}/${device.id}`)
       .json(device.toJSON());
   });
 

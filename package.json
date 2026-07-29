@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
+    "seed": "tsx src/scripts/seed.ts",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "vitest run"
